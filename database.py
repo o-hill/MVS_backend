@@ -6,10 +6,19 @@
 
 import pymongo
 from pymongo import MongoClient
-from bson import ObjectId
+
+from ipdb import set_trace as debug
 
 # Global database client.
 client = MongoClient()
+
+CELL_TYPES = ['WBC', 'RBC', 'Stem Cell']
+
+PROCESSING_OPTIONS = {
+    'Cell Segmentation': { 'Cell Type': ('LIST', CELL_TYPES), 'Distance': ('DOUBLE') },
+    'Cell Count': { 'Cell Type': ('LIST', CELL_TYPES) }
+    'Clean': { 'Uniform Elimination': ('BOOLEAN') }
+}
 
 
 class MongoDatabase:

@@ -15,14 +15,14 @@ client = MongoClient()
 CELL_TYPES = ['WBC', 'RBC', 'Stem Cell']
 
 PROCESSING_OPTIONS = [
-    { 'name': 'Cell Segmentation', options: [
-        { 'name': 'Cell Type', fields: ('LIST', CELL_TYPES) },
-        { 'name': 'Distance', fields: ('DOUBLE') }
+    { 'name': 'Cell Segmentation', 'options': [
+        { 'name': 'Cell Type', 'fields': ('LIST', CELL_TYPES) },
+        { 'name': 'Distance', 'fields': ('DOUBLE', 0.0) }
     ]},
-    { 'name: 'Cell Count', options: [
-        { name: 'Cell Type', fields: ('LIST', CELL_TYPES) }
+    { 'name': 'Cell Count', 'options': [
+        { 'name': 'Cell Type', 'fields': ('LIST', CELL_TYPES) }
     ]},
-    { name: 'Clean', options: [{ name: 'Uniform Elimination', fields: ('BOOLEAN') }]}
+    { 'name': 'Clean', 'options': [{ 'name': 'Uniform Elimination', 'fields': ('BOOLEAN', False) }]}
 ]
 
 
@@ -33,6 +33,7 @@ class MongoDatabase:
 
         self.db = client.MVS
         self.videos = self.db.videos
+        self.processed = self.db.processed
 
 
     def list_videos(self):
@@ -41,7 +42,7 @@ class MongoDatabase:
         return sorted(videos, key=lambda x: x['filename'])
 
 
-    def add_video(self, filename, save_dir):
+    def add_video(self, filename: str = '', save_dir: str = ''):
         '''Add a video filename to the database.'''
 
         self.videos.insert_one({
@@ -51,8 +52,19 @@ class MongoDatabase:
         })
 
 
-    def delete_video(self, filename):
+    def delete_video(self, filename: str = ''):
         '''Delete a video from the database.'''
         self.videos.delete_one({ 'filename': filename })
+
+
+    def add_processed_video(self, request: dict = { }):
+        '''Add a processed video to the database.'''
+        filename = request.pop('filename')
+        self.processed.insert_one({
+            'filename': filename,
+            'processing_options': dict(request)
+        })
+
+
 
 

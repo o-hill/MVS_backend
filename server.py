@@ -22,7 +22,6 @@ from subprocess import Popen
 
 from database import MongoDatabase
 from pymongo import MongoClient
-from serial import *
 
 from ipdb import set_trace as debug
 
@@ -132,6 +131,26 @@ class VideoServer(Resource):
         '''Return the URL of the video server.'''
         return 'http://localhost:2007'
 
+
+class VideoProcessing(Resource):
+
+    def get(self):
+        '''Get the status of all video processing.'''
+        status = {
+
+
+    def post(self):
+        '''Specify a video and options to process.'''
+        data = request.data
+
+        print('Put processing code here....')
+        return self.get()
+
+    def delete(self):
+        pass
+
+    def put(self):
+        pass
 
 
 

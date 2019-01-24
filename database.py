@@ -58,7 +58,9 @@ class MongoDatabase:
         self.videos.delete_one({ 'filename': filename })
 
     def something(x):
-        print("something not x")
+        print('Hello world!')
+        i = x + 10
+        print(x + i)
 
 
 

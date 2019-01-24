@@ -34,6 +34,7 @@ class MongoDatabase:
         self.db = client.MVS
         self.videos = self.db.videos
         self.processed = self.db.processed
+        self.logging = self.db.logging
 
 
     def list_videos(self):
@@ -63,6 +64,16 @@ class MongoDatabase:
         self.processed.insert_one({
             'filename': filename,
             'processing_options': dict(request)
+        })
+
+
+    def begin_logging_processing(self, filename):
+        '''Log distributed video processing progress.'''
+        return self.logging.insert_one({
+            'filename': filename,
+            'progress': 0,
+            'completed': False,
+            'error': ''
         })
 
 

@@ -23,6 +23,8 @@ from subprocess import Popen
 from database import MongoDatabase
 from pymongo import MongoClient
 
+from processing import Processor
+
 from ipdb import set_trace as debug
 
 
@@ -47,8 +49,14 @@ cors = CORS(app, allow_headers=valid_headers)
 # Connect to the database.
 mongo = MongoDatabase()
 
+# Video processing.
+processor = Processor()
+
 # Do a little server-side checking.
 ALLOWED_EXTENSIONS = set(['webm', 'mp4', 'mp3', 'wav', 'jpeg', 'gif', 'png'])
+
+# -------------------------------------------------------------
+# Global functions.
 
 def allowed_file(filename):
     '''Ensure we want to keep this file.'''
@@ -136,8 +144,7 @@ class VideoProcessing(Resource):
 
     def get(self):
         '''Get the status of all video processing.'''
-        status = {
-
+        return processor.get_status()
 
     def post(self):
         '''Specify a video and options to process.'''

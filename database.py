@@ -57,12 +57,6 @@ class MongoDatabase:
         '''Delete a video from the database.'''
         self.videos.delete_one({ 'filename': filename })
 
-    def something(x):
-        print('Hello world!')
-        i = x + 10
-        print(x + i)
-
-
 
     def add_processed_video(self, request: dict = { }):
         '''Add a processed video to the database.'''

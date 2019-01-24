@@ -55,4 +55,8 @@ class MongoDatabase:
         '''Delete a video from the database.'''
         self.videos.delete_one({ 'filename': filename })
 
+    def something(x):
+    print(x)
+
+
 

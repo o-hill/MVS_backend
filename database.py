@@ -79,6 +79,7 @@ class MongoDatabase:
 
     def update_video_progress(self, video_id, progress):
         '''Update the progress of a video processing task.'''
+        pass
 
 
 

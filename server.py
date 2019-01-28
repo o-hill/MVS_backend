@@ -153,13 +153,6 @@ class VideoProcessing(Resource):
         print('Put processing code here....')
         return self.get()
 
-    def delete(self):
-        pass
-
-    def put(self):
-        pass
-
-
 
 
 # ----------------------------------------------------------------

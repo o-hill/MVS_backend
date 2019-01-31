@@ -24,6 +24,7 @@ def edge_detection_video():
     output_filename = 'edges.mp4'
     output_fps = 10
     width, height = int(video.get(cv2.CAP_PROP_FRAME_WIDTH)), int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    output = imageio.get_writer('edges2.mp4', fps=10, mode='I')
 
     num_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
     full_video = np.zeros((num_frames, height, width), dtype=np.uint8)
@@ -38,9 +39,9 @@ def edge_detection_video():
 
         edges = edge_detection(eliminated)
         edges = edges.astype(np.uint8) * 255
-        full_video[i, :, :] = edges
+        output.append_data(edges)
 
-    imageio.mimwrite(output_filename, full_video, fps=10)
+    output.close()
     print('All done!')
 
 def test_uniform_elimination():

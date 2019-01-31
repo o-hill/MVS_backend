@@ -19,7 +19,7 @@ COLOR = True
 OUTPUT_CODE = cv2.VideoWriter_fourcc(*'XVID')
 
 
-class Processor:
+class ProcessingScheduler:
 
     def __init__(self):
         self.processing_queue = deque()
@@ -64,23 +64,36 @@ def process_video(functions: list = [], video_filename: str = '', new_filename: 
     if not functions or not video_filename or not new_filename:
         print('> Processing error: invalid input...')
 
+    # Make sure the file extension is correct for the file type we use.
+    if new_filename.find('.'):
+        new_filename = new_filename.split('.')[0]
+
     video = cv2.VideoCapture(video_filename)
     output = cv2.VideoWriter(f'{new_filename}{FILE_TYPE}', OUTPUT_CODE, FRAME_RATE, FRAME_SIZE, COLOR)
 
     # Logging progress.
     num_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
-    logging_id = mongo.begin_logging_processing(new_filename)
+    logging_id = mongo.begin_logging_processing(new_filename).inserted_id
 
     ret = True
-    while ret:
-        ret, frame = video.read()
+    try:
+        while ret:
+            ret, frame = video.read()
 
-        # Process the frame of data.
-        for f in functions:
-            frame = f(frame)
+            # Process the frame of data.
+            for f in functions:
+                frame = f(frame)
 
-        # Write to the file.
-        output.write(frame)
+            # Write to the file.
+            output.write(frame)
+
+    # Handle errors in processing and report them to the database.
+    except Exception as err:
+        print(f'\n>>> Error processing video {video_filename} with processing {functions}.' \
+                + 'Reporting error to the database.')
+
+        error_report = { 'error_type': type(err), 'message': str(err) }
+        mongo.report_processing_error(logging_id, error_report)
 
 
 

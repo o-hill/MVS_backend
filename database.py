@@ -67,19 +67,43 @@ class MongoDatabase:
         })
 
 
-    def begin_logging_processing(self, filename):
+    def begin_logging_processing(self, filename: str = ''):
         '''Log distributed video processing progress.'''
         return self.logging.insert_one({
             'filename': filename,
             'progress': 0,
             'completed': False,
-            'error': ''
+            'error': { }
         })
 
 
-    def update_video_progress(self, video_id, progress):
+    def update_video_progress(self, video_id, progress: int = 0):
         '''Update the progress of a video processing task.'''
-        pass
+        return self.logging.update_one(
+                { '_id': video_id },
+                { '$set': {'progress': progress} },
+                upsert = False
+        )
+
+
+    def complete_video_processing(self, video_id):
+        '''Mark the video processing task as complete.'''
+        return self.logging.update_one(
+                { '_id': video_id },
+                { '$set': {'completed': True} },
+                upsert = False
+        )
+
+    def report_processing_error(self, video_id, error: dict = { }):
+        '''Report an error with a video processing task.
+
+            @error: dictionary containing keys 'error_type' and 'message'.
+        '''
+        return self.logging.update_one(
+                { '_id': video_id },
+                { '$set': {'error': error} },
+                upsert = False
+        )
 
 
 

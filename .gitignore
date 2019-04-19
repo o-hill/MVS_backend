@@ -1,2 +1,4 @@
 *.pdf
 videos/
+__pycache__/*
+*.pyc

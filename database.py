@@ -6,6 +6,7 @@
 
 import pymongo
 from pymongo import MongoClient
+from mongoengine import *
 
 from ipdb import set_trace as debug
 
@@ -35,7 +36,7 @@ class MongoDatabase:
         self.videos = self.db.videos
         self.processed = self.db.processed
         self.logging = self.db.logging
-
+        self.experiments = self.db.experiments
 
     def list_videos(self):
         '''Return a list of filenames for available videos.'''
@@ -57,12 +58,6 @@ class MongoDatabase:
         '''Delete a video from the database.'''
         self.videos.delete_one({ 'filename': filename })
 
-    def something(x):
-        print('Hello world!')
-        i = x + 10
-        print(x + i)
-
-
 
     def add_processed_video(self, request: dict = { }):
         '''Add a processed video to the database.'''
@@ -83,5 +78,13 @@ class MongoDatabase:
         })
 
 
+    def add_experiment(self, experiment):
+        '''Add an experiment to the database.'''
+        self.experiments.insert_one(experiment)
 
 
+'''class Dish(Document):
+    dish_number = IntField()
+    start_date = DateTimeField()
+    end_date = DatetimeField()
+'''

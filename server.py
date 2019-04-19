@@ -15,6 +15,7 @@ from flask_cors import *
 # But let's use WSGIServer for actually putting the host up.
 import eventlet
 from eventlet import wsgi
+from pdb import set_trace as debug
 
 import os
 from werkzeug.utils import secure_filename
@@ -27,6 +28,7 @@ from processing import Processor
 
 from ipdb import set_trace as debug
 
+from config import *
 
 # -------------------------------------------------------------
 
@@ -97,7 +99,7 @@ class Video(Resource):
         '''Return the video for the user to download.'''
         print(f'Sending file {video_filename} from {SAVE_DIR}')
         response = send_from_directory(directory=SAVE_DIR, filename=video_filename)
-        return respone
+        return response
 
     @validate_filepath
     def delete(self, video_filename: str = ''):
@@ -105,7 +107,6 @@ class Video(Resource):
         print(f'Deleting file {video_filename} from {SAVE_DIR} and from the database.')
         os.remove(os.path.join(SAVE_DIR, video_filename))
         mongo.delete_video(video_filename)
-
 
 
 class Videos(Resource):
@@ -161,12 +162,40 @@ class VideoProcessing(Resource):
 
 
 
+class Experiments(Resource):
+
+    def get(self):
+        return 'Maiden rules.'
+
+    def post(self):
+        '''Add a new experiment'''
+        experiment = request.json
+        mongo.add_experiment(experiment)
+
+class Dishes(Resource):
+
+    def get(self):
+        return get_list_of_dishes()
+
+'''
+class GroundTruths(Resource):
+    """Handle creation of ground truth, etc."""
+
+    def post(self):
+        """Create a new post-field ground truth point."""
+        data = request.json
+        new_truth = create_machine_truth(data)
+        db.add_ground_truth(new_truth)
+'''
+
 
 # ----------------------------------------------------------------
 
 api.add_resource(Videos, '/videos', methods=['GET', 'POST'])
 api.add_resource(Video, '/video/<video_filename>', methods=['GET', 'DELETE'])
 api.add_resource(VideoServer, '/video_server', methods=['GET'])
+api.add_resource(Dishes, '/dishes', methods=['GET'])
+api.add_resource(Experiments, '/experiments', methods=['POST', 'GET'])
 
 # -----------------------------------------------------------------
 
